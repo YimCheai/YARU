@@ -2,18 +2,29 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import requests
 from datetime import datetime
+import json
+import os
 
-# ------------------ NEIS API 설정 ------------------
 API_KEY = "3cddf97d69024b8587578689b3ab2812"
-EDU_OFFICE_CODE = "B10"
-SCHOOL_CODE = "7011569"
-GRADE = 2
-CLASS = 1
-SEMESTER = 2
 TYPE = "json"
+SEMESTER = 2
+
+# ------------------ config.json 불러오기 ------------------
+CONFIG_PATH = "widgets/config.json"
+if not os.path.exists(CONFIG_PATH):
+    raise FileNotFoundError("config.json이 존재하지 않습니다. 학교 설정을 먼저 완료하세요.")
+
+with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+EDU_OFFICE_CODE = config.get("edu_office_code", "B10")  # 기본값 서울
+SCHOOL_CODE = config.get("school_code")
+GRADE = config.get("grade", 1)
+CLASS = config.get("class", 1)
 
 today = datetime.today().strftime("%Y%m%d")
 
+# ------------------ NEIS API 요청 ------------------
 url = (
     f"https://open.neis.go.kr/hub/hisTimetable?"
     f"KEY={API_KEY}&Type={TYPE}"
@@ -30,9 +41,10 @@ data = response.json()
 
 time_table = []
 if "hisTimetable" in data:
-    time_table = data.get("hisTimetable", [])
-    if time_table:
-        time_table = time_table[1]["row"]
+    try:
+        time_table = data["hisTimetable"][1]["row"]
+    except (KeyError, IndexError):
+        time_table = []
 
 # ------------------ 이동수업 과목 ------------------
 MOVE_SUBJECTS = [
@@ -46,7 +58,7 @@ MOVE_SUBJECTS = [
 # ------------------ Tkinter 창 ------------------
 root = tk.Tk()
 root.title("오늘 시간표")
-root.geometry("750x650")  # 가로 750, 세로 650
+root.geometry("750x650")
 root.configure(bg="#1E2144")
 root.resizable(False, False)
 
@@ -73,10 +85,9 @@ if time_table:
         period = lesson.get("PERIO", "")
         subject = lesson.get("ITRT_CNTNT", "")
 
-        # 이동수업 여부 판별
         if any(move.replace(" ", "") in subject.replace(" ", "") for move in MOVE_SUBJECTS):
             move_text = " (이동수업)"
-            color = "#FFD700"  # 노란색
+            color = "#FFD700"
         else:
             move_text = ""
             color = "white"
