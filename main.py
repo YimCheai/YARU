@@ -11,7 +11,7 @@ root.resizable(False, False)
 canvas = tk.Canvas(root, width=700, height=400, bg="#1E2144", highlightthickness=0)
 canvas.pack()
 
-# 🐰 토끼 이미지
+# 토끼
 image = Image.open("images/yaruRabbit.png")
 orig_width, orig_height = image.size
 max_width = 150
@@ -44,11 +44,10 @@ rect_y1 = 270
 rect_y2 = 385
 create_rounded_rectangle(50, rect_y1, 650, rect_y2, radius=35, fill="#2E2E5C", outline="")
 
-# 💬 토끼 위쪽 텍스트
+
 canvas.create_text(250, 100, text="학교를 등록하고", fill="white", font=("Pretendard SemiBold", 18), anchor="nw")
 canvas.create_text(250, 130, text="시간표와 급식 정보를 확인하세요!", fill="white", font=("Pretendard SemiBold", 18), anchor="nw")
 
-# 📁 메뉴 아이콘 & 글씨
 menu_icons = ["images/calender.png", "images/meal.png", "images/setting.png"]
 menu_texts = ["시간표", "급식", "설정"]
 menu_images = []
