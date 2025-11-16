@@ -1,5 +1,10 @@
 {
-    "school_code": "7010167",
+    "edu_office_code": "B10",
+    "school_code": "7011569",
     "grade": 2,
-    "class": 1
+    "class": 2,
+    "move_subjects": [],
+    "allergies": [],
+    "alarm_before_lunch": 10,
+    "alarm_before_class": 5
 }
